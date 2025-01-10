@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Grepolis Defense Tool
 // @namespace    https://grepolis.com
-// @version      0.0.2
+// @version      0.0.3
 // @description  Zeigt an, wie stark deine Verteidigung von der optimalen Abwehr abweicht.
 // @author       Eugen252009
 // @match        https://*.grepolis.com/game/*
@@ -89,7 +89,7 @@ class GDT {
         const allOrderedUnits = window.GDTMain.getAllOrderedUnits(data.UnitOrder);
 
         //not really needed but it shows in the log how many troups you are building and how much you have in total.
-        Object.keys(allOrderedUnits).forEach(x => allOrderedUnits[x] !== 0 ? GDTLogger.log(x, allOrderedUnits[x], allOrderedUnits[x] + allUnits[x]) : undefined);
+        Object.keys(allOrderedUnits).forEach(x => allOrderedUnits[x] !== 0 ? window.GDTLogger.log(x, allOrderedUnits[x], allOrderedUnits[x] + allUnits[x]) : undefined);
 
 
         //Adding Ordered Units to the normal
@@ -98,7 +98,7 @@ class GDT {
         allUnits.hoplite += allOrderedUnits.hoplite;
 
         //Total diff
-        return [GDTMain.getDifference(allUnits), allUnits, allOrderedUnits];
+        return [GDTMain.getDifference(allUnits, free), allUnits, allOrderedUnits];
     }
 
     buildImg(type, diff) {
@@ -145,9 +145,9 @@ class GDT {
 
             //append everything whats needed
             container.replaceChildren();
-            if (diff[0].sword >= 0 || window.GDTMain.debug) container.appendChild(sword);
-            if (diff[0].archer >= 0 || window.GDTMain.debug) container.appendChild(archer);
-            if (diff[0].hoplite >= 0 || window.GDTMain.debug) container.appendChild(hoplite);
+            if (diff[0].sword > 0 || window.GDTMain.debug) container.appendChild(sword);
+            if (diff[0].archer > 0 || window.GDTMain.debug) container.appendChild(archer);
+            if (diff[0].hoplite > 0 || window.GDTMain.debug) container.appendChild(hoplite);
         }
     }
 }
@@ -157,3 +157,5 @@ window.GDTLogger = new Logger(window.GDTMain.debug);
 
 window.$.Observer(window.GameEvents.window.open).subscribe(window.GDTMain.showTroups);
 window.$.Observer(window.GameEvents.town.town_switch).subscribe(window.GDTMain.redraw);
+window.$.Observer(window.GameEvents.unit.order.change).subscribe(window.GDTMain.redraw);
+window.$.Observer(window.GameEvents.window.reload).subscribe(window.GDTMain.redraw);

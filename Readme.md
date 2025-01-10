@@ -104,7 +104,7 @@ Wenn Einheiten fehlen, zeigt das Tool im „Kaserne“-Fenster die genaue Anzahl
 ## Hinweise für die Nutzung
 
 - Das Script funktioniert nur im „Kaserne“-Fenster und aktualisiert sich automatisch beim Wechsel der Stadt.
-- Debugging kann über die `Logger`-Klasse aktiviert werden (Standard: deaktiviert).
+- Debugging kann über den GDTMain Constructor aktiviert werden (Standard: deaktiviert).
 
 ---
 
