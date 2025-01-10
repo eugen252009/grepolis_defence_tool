@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Grepolis Defence Tool",
+  "description": "This Tool shows you, which Units you need for the best defence",
+  "version": "0.1",
+  "host_permissions": ["https://*.grepolis.com/"],
+  "background": {
+    "service_worker": "scripts/background.js"
+  },
+  "permissions": ["scripting", "activeTab"],
+  "action": {
+    "default_popup": "html/hello.html"
+  },
+  "content_scripts": [
+    {
+      "world":"MAIN",
+      "js": ["scripts/inject.js"],
+      "matches": [
+        "https://*.grepolis.com/*"
+      ]
+    }
+  ]
+}

@@ -1,14 +1,4 @@
-// ==UserScript==
-// @name         Grepolis Defense Tool
-// @namespace    https://grepolis.com
-// @version      0.0.3
-// @description  Zeigt an, wie stark deine Verteidigung von der optimalen Abwehr abweicht.
-// @author       Eugen252009
-// @match        https://*.grepolis.com/game/*
-// @grant        none
-// ==/UserScript==
-
-class Logger {
+class GDTLogger {
     constructor(debug = false) {
         this.debug = debug;
     };
@@ -20,7 +10,8 @@ class Logger {
 
 const round = (num) => Math.floor(num);
 
-class GDT {
+class GDTMain {
+    version = "0.0.4";
     allUnitsList = Object.keys(window.GameData.units);
 
     constructor(debug = false) {
@@ -66,11 +57,14 @@ class GDT {
     getDifference({ sword = 0, archer = 0, hoplite = 0 }, offset = 0) {
         const calc = (amnt, percent) => round(amnt * percent);
         const count = sword + archer + hoplite + offset;
+        const boats_needed = Math.ceil(count / 21);
         const needed = {
-            archer: calc(count, 0.2) - archer,
-            sword: calc(count, 0.55) - sword,
-            hoplite: calc(count, 0.25) - hoplite,
+            archer: calc(count - boats_needed * 5, 0.2) - archer,
+            sword: calc(count - boats_needed * 5, 0.55) - sword,
+            hoplite: calc(count - boats_needed * 5, 0.25) - hoplite,
         };
+
+
 
         return needed;
     }
@@ -85,8 +79,8 @@ class GDT {
         const free = (max - blocked) * 0.9;
 
         //all available Units and all ordered Units
-        const allUnits = window.GDTMain.getAllUnits(data.Units);
-        const allOrderedUnits = window.GDTMain.getAllOrderedUnits(data.UnitOrder);
+        const allUnits = window.GDT.getAllUnits(data.Units);
+        const allOrderedUnits = window.GDT.getAllOrderedUnits(data.UnitOrder);
 
         //not really needed but it shows in the log how many troups you are building and how much you have in total.
         Object.keys(allOrderedUnits).forEach(x => allOrderedUnits[x] !== 0 ? window.GDTLogger.log(x, allOrderedUnits[x], allOrderedUnits[x] + allUnits[x]) : undefined);
@@ -98,7 +92,7 @@ class GDT {
         allUnits.hoplite += allOrderedUnits.hoplite;
 
         //Total diff
-        return [GDTMain.getDifference(allUnits, free), allUnits, allOrderedUnits];
+        return [window.GDT.getDifference(allUnits, free), allUnits, allOrderedUnits];
     }
 
     buildImg(type, diff) {
@@ -115,21 +109,21 @@ class GDT {
         //skip if the window is not the Barrack
         if (data.context !== "building_barracks") return;
 
-        const diff = window.GDTMain.calcDeff();
+        const diff = window.GDT.calcDeff();
 
         //create The HTML
         const div = document.createElement("div");
-        const sword = window.GDTMain.buildImg("sword", diff[0].sword);
-        const archer = window.GDTMain.buildImg("archer", diff[0].archer);
-        const hoplite = window.GDTMain.buildImg("hoplite", diff[0].hoplite);
+        const sword = window.GDT.buildImg("sword", diff[0].sword);
+        const archer = window.GDT.buildImg("archer", diff[0].archer);
+        const hoplite = window.GDT.buildImg("hoplite", diff[0].hoplite);
 
         div.id = "GDTTroups";
         div.style = "position:absolute; color:black; top:60%; right:0; z-index:1000; font-weight:800;";
 
         //append everything whats needed
-        if (diff[0].sword > 0 || window.GDTMain.debug) div.appendChild(sword);
-        if (diff[0].archer > 0 || window.GDTMain.debug) div.appendChild(archer);
-        if (diff[0].hoplite > 0 || window.GDTMain.debug) div.appendChild(hoplite);
+        if (diff[0].sword > 0 || window.GDT.debug) div.appendChild(sword);
+        if (diff[0].archer > 0 || window.GDT.debug) div.appendChild(archer);
+        if (diff[0].hoplite > 0 || window.GDT.debug) div.appendChild(hoplite);
 
         //Append The HTML to the Barrack Window
         data.wnd.getJQElement()[0].appendChild(div);
@@ -137,25 +131,25 @@ class GDT {
     redraw() {
         const container = document.querySelector("#GDTTroups");
         if (container) {
-            const diff = window.GDTMain.calcDeff();
+            const diff = window.GDT.calcDeff();
 
-            const sword = window.GDTMain.buildImg("sword", diff[0].sword);
-            const archer = window.GDTMain.buildImg("archer", diff[0].archer);
-            const hoplite = window.GDTMain.buildImg("hoplite", diff[0].hoplite);
+            const sword = window.GDT.buildImg("sword", diff[0].sword);
+            const archer = window.GDT.buildImg("archer", diff[0].archer);
+            const hoplite = window.GDT.buildImg("hoplite", diff[0].hoplite);
 
             //append everything whats needed
             container.replaceChildren();
-            if (diff[0].sword > 0 || window.GDTMain.debug) container.appendChild(sword);
-            if (diff[0].archer > 0 || window.GDTMain.debug) container.appendChild(archer);
-            if (diff[0].hoplite > 0 || window.GDTMain.debug) container.appendChild(hoplite);
+            if (diff[0].sword > 0 || window.GDT.debug) container.appendChild(sword);
+            if (diff[0].archer > 0 || window.GDT.debug) container.appendChild(archer);
+            if (diff[0].hoplite > 0 || window.GDT.debug) container.appendChild(hoplite);
         }
     }
 }
 
-window.GDTMain = new GDT(false);
-window.GDTLogger = new Logger(window.GDTMain.debug);
+window.GDT = new GDTMain(true);
+window.GDTLogger = new GDTLogger(window.GDT.debug);
 
-window.$.Observer(window.GameEvents.window.open).subscribe(window.GDTMain.showTroups);
-window.$.Observer(window.GameEvents.town.town_switch).subscribe(window.GDTMain.redraw);
-window.$.Observer(window.GameEvents.unit.order.change).subscribe(window.GDTMain.redraw);
-window.$.Observer(window.GameEvents.window.reload).subscribe(window.GDTMain.redraw);
+window.$.Observer(window.GameEvents.window.open).subscribe(window.GDT.showTroups);
+window.$.Observer(window.GameEvents.town.town_switch).subscribe(window.GDT.redraw);
+window.$.Observer(window.GameEvents.unit.order.change).subscribe(window.GDT.redraw);
+window.$.Observer(window.GameEvents.window.reload).subscribe(window.GDT.redraw);
