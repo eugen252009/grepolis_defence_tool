@@ -4,9 +4,6 @@
   "description": "This Tool shows you, which Units you need for the best defence",
   "version": "0.1",
   "host_permissions": ["https://*.grepolis.com/"],
-  "background": {
-    "service_worker": "scripts/background.js"
-  },
   "permissions": ["scripting", "activeTab"],
   "action": {
     "default_popup": "html/hello.html"
