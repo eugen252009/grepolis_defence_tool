@@ -12,11 +12,10 @@ const round = (num) => Math.floor(num);
 
 class GDTMain {
     version = "0.0.4";
-    allUnitsList = [];
+    allUnitsList = Object.keys(window.GameData.units);
 
-    constructor(allUnitsList, debug = false) {
+    constructor(debug = false) {
         this.debug = debug;
-        this.allUnitsList = allUnitsList;
     }
 
     reset(item) {
@@ -131,28 +130,29 @@ class GDTMain {
     }
     redraw() {
         const container = document.querySelector("#GDTTroups");
-        if (container) {
-            const diff = window.GDT.calcDeff();
+        if (!container) return;
 
-            const sword = window.GDT.buildImg("sword", diff[0].sword);
-            const archer = window.GDT.buildImg("archer", diff[0].archer);
-            const hoplite = window.GDT.buildImg("hoplite", diff[0].hoplite);
+        const diff = window.GDT.calcDeff();
+        const sword = window.GDT.buildImg("sword", diff[0].sword);
+        const archer = window.GDT.buildImg("archer", diff[0].archer);
+        const hoplite = window.GDT.buildImg("hoplite", diff[0].hoplite);
 
-            //append everything whats needed
-            container.replaceChildren();
-            if (diff[0].sword > 0 || window.GDT.debug) container.appendChild(sword);
-            if (diff[0].archer > 0 || window.GDT.debug) container.appendChild(archer);
-            if (diff[0].hoplite > 0 || window.GDT.debug) container.appendChild(hoplite);
-        }
+        //append everything whats needed
+        container.replaceChildren();
+        if (diff[0].sword > 0 || window.GDT.debug) container.appendChild(sword);
+        if (diff[0].archer > 0 || window.GDT.debug) container.appendChild(archer);
+        if (diff[0].hoplite > 0 || window.GDT.debug) container.appendChild(hoplite);
     }
 }
 
-window.GDT = new GDTMain(Object.keys(window.GameData.units), false);
-window.GDTLogger = new GDTLoggerFactory(window.GDT.debug);
+window.onload = () => {
+    window.GDT = new GDTMain(true);
+    window.GDTLogger = new GDTLoggerFactory(window.GDT.debug);
 
-window.$.Observer(window.GameEvents.window.open).subscribe(window.GDT.showTroups);
-window.$.Observer(window.GameEvents.town.town_switch).subscribe(window.GDT.redraw);
-window.$.Observer(window.GameEvents.unit.order.change).subscribe(window.GDT.redraw);
-window.$.Observer(window.GameEvents.window.reload).subscribe(window.GDT.redraw);
+    window.$.Observer(window.GameEvents.window.open).subscribe(window.GDT.showTroups);
+    window.$.Observer(window.GameEvents.town.town_switch).subscribe(window.GDT.redraw);
+    window.$.Observer(window.GameEvents.unit.order.change).subscribe(window.GDT.redraw);
+    window.$.Observer(window.GameEvents.window.reload).subscribe(window.GDT.redraw);
 
-GDTLogger.log("Installed the script sucessfully!");
+    GDTLogger.log("Installed the script sucessfully!");
+}
