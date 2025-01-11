@@ -12,10 +12,10 @@ const round = (num) => Math.floor(num);
 
 class GDTMain {
     version = "0.0.4";
-    allUnitsList = Object.keys(window.GameData.units);
 
     constructor(debug = false) {
         this.debug = debug;
+        this.allUnitsList = Object.keys(window.GameData.units);
     }
 
     reset(item) {
@@ -146,7 +146,10 @@ class GDTMain {
 }
 
 window.onload = () => {
-    window.GDT = new GDTMain(true);
+    const units = window.GameData.units;
+    if (!units) return;
+
+    window.GDT = new GDTMain();
     window.GDTLogger = new GDTLoggerFactory(window.GDT.debug);
 
     window.$.Observer(window.GameEvents.window.open).subscribe(window.GDT.showTroups);
