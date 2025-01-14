@@ -16,7 +16,7 @@
       "world":"MAIN",
       "js": ["scripts/inject.js"],
       "matches": [
-        "https://*.grepolis.com/*"
+        "https://*.grepolis.com/game/*"
       ]
     }
   ]

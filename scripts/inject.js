@@ -1,16 +1,18 @@
 class GDTLoggerFactory {
+
     constructor(debug = false) {
         this.debug = debug;
+        this.loghistory = [];
     };
 
-    log = (...message) => { this.debug ? console.log("[GDT]", ...message) : null };
-    dir = (...message) => { this.debug ? console.dir({ GDT: "[GDT]", message }) : null };
-    error = (...message) => { this.debug ? console.error("[GDT]", ...message) : null };
+    log = (...message) => { this.loghistory.push(message); this.debug ? console.log("[GDT]", ...message) : null };
+    dir = (...message) => { this.loghistory.push(message); this.debug ? console.dir({ GDT: "[GDT]", message }) : null };
+    error = (...message) => { this.loghistory.push(message); this.debug ? console.error("[GDT]", ...message) : null };
 }
 
 const round = (num) => Math.floor(num);
 
-class GDTMain {
+class GDTFactory {
     version = "0.0.4";
 
     constructor(debug = false) {
@@ -98,37 +100,27 @@ class GDTMain {
     buildImg(type, diff) {
         const p = document.createElement("p");
 
-        p.innerHTML = `<span style = "position:absolute;bottom:2px;right:2px;text-shadow: 1px 1px 0 #000;">${diff}</span> `;
-        p.className = `unit unit_order_unit_image unit_icon50x50 ${type} `
-        p.style = "color:white;font-size:15px;postition:relative;"
+        p.innerHTML = `<span style = "position:absolute;bottom:2px;right:2px;text-shadow: 1px 1px 0 #000;" class="${type}">${diff}</span>`;
+        p.className = `unit unit_order_unit_image unit_icon50x50 ${type}`
+        p.style = `color:white;font-size:15px;postition:relative;`
 
         return p;
     }
 
-    showTroups(_e, data) {
-        //skip if the window is not the Barrack
-        if (data.context !== "building_barracks") return;
-
-        const diff = window.GDT.calcDeff();
-
-        //create The HTML
+    showTroups(data) {
+        // //create The HTML
         const div = document.createElement("div");
-        const sword = window.GDT.buildImg("sword", diff[0].sword);
-        const archer = window.GDT.buildImg("archer", diff[0].archer);
-        const hoplite = window.GDT.buildImg("hoplite", diff[0].hoplite);
-
         div.id = "GDTTroups";
         div.style = "position:absolute; color:black; top:60%; right:0; z-index:1000; font-weight:800;";
-
-        //append everything whats needed
-        if (diff[0].sword > 0 || window.GDT.debug) div.appendChild(sword);
-        if (diff[0].archer > 0 || window.GDT.debug) div.appendChild(archer);
-        if (diff[0].hoplite > 0 || window.GDT.debug) div.appendChild(hoplite);
-
-        //Append The HTML to the Barrack Window
+        //Append The HTML to the Barrack Window for later reference
         data.wnd.getJQElement()[0].appendChild(div);
     }
     redraw() {
+        function click(event) {
+            let type = event.target.className.split(" ").at(-1);
+            const unit = document.querySelector(`.${type}`)
+            unit.click()
+        }
         const container = document.querySelector("#GDTTroups");
         if (!container) return;
 
@@ -137,25 +129,58 @@ class GDTMain {
         const archer = window.GDT.buildImg("archer", diff[0].archer);
         const hoplite = window.GDT.buildImg("hoplite", diff[0].hoplite);
 
+
+        sword.addEventListener("click", click)
+        archer.addEventListener("click", click)
+        hoplite.addEventListener("click", click)
+
         //append everything whats needed
-        container.replaceChildren();
+        container.replaceChildren(sword, archer, hoplite);
         if (diff[0].sword > 0 || window.GDT.debug) container.appendChild(sword);
         if (diff[0].archer > 0 || window.GDT.debug) container.appendChild(archer);
         if (diff[0].hoplite > 0 || window.GDT.debug) container.appendChild(hoplite);
+    }
+
+    attackCityList(data) {
+        const div = document.createElement("div");
+        div.id = "staeteliste";
+        data.wnd.getJQElement()[0].appendChild(div);
+    }
+    getBuilding(_e, data) {
+        if (_e.type === "window:reload") {
+            window.GDT.redraw();
+            return;
+        }
+
+        switch (data.context) {
+            case "building_barracks":
+                window.GDT.showTroups(data);
+                break;
+            case "building_docks":
+                window.GDT.showTroups(data);
+                break;
+            case "player_profile":
+                window.GDT.attackCityList(data)
+                break;
+            default:
+                // window.GDTLogger.log(`${data.context} is not Implemented yet.`)
+                return;
+        }
     }
 }
 
 window.onload = () => {
     const units = window.GameData.units;
     if (!units) return;
+    const GDTDEBUG = true;
 
-    window.GDT = new GDTMain();
+    window.GDT = new GDTFactory(GDTDEBUG);
     window.GDTLogger = new GDTLoggerFactory(window.GDT.debug);
 
-    window.$.Observer(window.GameEvents.window.open).subscribe(window.GDT.showTroups);
-    window.$.Observer(window.GameEvents.town.town_switch).subscribe(window.GDT.redraw);
-    window.$.Observer(window.GameEvents.unit.order.change).subscribe(window.GDT.redraw);
-    window.$.Observer(window.GameEvents.window.reload).subscribe(window.GDT.redraw);
+    window.$.Observer(window.GameEvents.window.open).subscribe(window.GDT.getBuilding);
+    window.$.Observer(window.GameEvents.town.town_switch).subscribe(window.GDT.getBuilding);
+    window.$.Observer(window.GameEvents.unit.order.change).subscribe(window.GDT.getBuilding);
+    window.$.Observer(window.GameEvents.window.reload).subscribe(window.GDT.getBuilding);
 
-    GDTLogger.log("Installed the script sucessfully!");
+    window.GDTLogger.log("Installed the script sucessfully!");
 }
