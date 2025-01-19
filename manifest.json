@@ -14,7 +14,7 @@
   "content_scripts": [
     {
       "world":"MAIN",
-      "js": ["scripts/inject.js"],
+      "js": ["scripts/output/GDTMain.js"],
       "matches": [
         "https://*.grepolis.com/game/*"
       ]
