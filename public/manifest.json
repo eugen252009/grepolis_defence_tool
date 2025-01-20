@@ -1,0 +1,24 @@
+{
+	"manifest_version": 3,
+	"name": "Grepolis Defence Tool",
+	"version": "0.0.1",
+	"description": "This Tool is a Defence Calculator for the Browsergame Grepolis",
+	"background": {
+		"service_worker": "background.js"
+	},
+	"content_scripts": [
+		{
+			"world":"MAIN",
+			"matches": ["https://*.grepolis.com/game/*"],
+			"js": ["content.js"]
+		}
+	],
+	"action": {
+		"default_popup": "popup.html"
+	},
+	"options_page": "options.html",
+	  "permissions": [
+		"scripting",
+		"activeTab"
+	  ]
+}
