@@ -1,5 +1,5 @@
-import { CollectionType } from "./CollectionType"
-import { ModelsType } from "./ModelsType"
+import type { CollectionType } from "./CollectionType.d.ts"
+import type { ModelsType } from "./ModelsType.d.ts"
 
 export interface MMType {
     status: {

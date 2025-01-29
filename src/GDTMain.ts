@@ -1,8 +1,5 @@
-import { GameDataType, Units } from "./types/GameDataTypes"
-import { GameEventsType } from "./types/GameEvents"
-import { CollectionType } from "./types/CollectionType"
-import { ModelsType } from "./types/ModelsType"
-import { MMType } from "./types/MMType"
+import type { CollectionType } from "./types/CollectionType.d.ts";
+import type { ModelsType } from "./types/ModelsType.d.ts";
 
 class GDTFactory {
     debug: boolean = false;
@@ -196,7 +193,7 @@ window.onload = () => {
     //@ts-ignore
     window.GDTLogger = new GDTLoggerFactory(GDTDEBUG);
     //@ts-ignore
-    window.GDTMarket = new GDTMarketChecker("https://cdn.grcrt.net/ui/s/alarm.mp3");
+    // window.GDTMarket = new GDTMarketChecker("https://cdn.grcrt.net/ui/s/alarm.mp3");
     // window.GDTMarket.checkForRessources();
 
 
@@ -213,3 +210,21 @@ window.onload = () => {
     //@ts-ignore
     window.GDTLogger.log("Installed the script sucessfully!");
 }
+
+
+class GDTLoggerFactory {
+    debug = false;
+    loghistory = [];
+    constructor(debug = false) {
+        this.debug = debug;
+        this.loghistory = [];
+    };
+    //@ts-ignore
+    log = (...message: any[]) => { this.loghistory.push(message); this.debug ? console.log("[GDT]", ...message) : null };
+    //@ts-ignore
+    dir = (...message: any[]) => { this.loghistory.push(message); this.debug ? console.dir({ GDT: "[GDT]", message }) : null };
+    //@ts-ignore
+    error = (...message: any[]) => { this.loghistory.push(message); this.debug ? console.error("[GDT]", ...message) : null };
+}
+
+// const round = (num: number): number => Math.floor(num);
