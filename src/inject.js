@@ -28,10 +28,6 @@ class GDTFactory {
     }
 
     getAllUnits() {
-        this.collections?.Units[0].map(x => {
-            console.log(x.home_town_id)
-        })
-        console.log(this.collections)
         const allUnits = {};
         this.reset(allUnits);
         for (const inner of this.collections.UnitOrder) {
@@ -95,7 +91,7 @@ class GDTFactory {
     buildImg(type, diff) {
         const p = document.createElement("p");
 
-        p.innerHTML = `<span style = "position:absolute;bottom:2px;right:2px;text-shadow: 1px 1px 0 #000;" class="${type}">${diff}</span>`;
+        p.innerHTML = `<span style="position:absolute;bottom:2px;right:2px;text-shadow: 1px 1px 0 #000;" class="${type}">${diff}</span>`;
         p.className = `unit unit_order_unit_image unit_icon50x50 ${type}`
         p.style = `color:white;font-size:15px;postition:relative;`
 
@@ -103,7 +99,7 @@ class GDTFactory {
     }
 
     showTroups(data) {
-        // //create The HTML
+        //create The HTML
         const div = document.createElement("div");
         div.id = "GDTTroups";
         div.style = "position:absolute; color:black; top:60%; right:0; z-index:1000; font-weight:800;";
@@ -151,11 +147,9 @@ class GDTFactory {
 
     getBuilding(event, data) {
         if (event.type === "window:reload") {
-            console.log(event, data);
             window.GDT.redraw();
             return;
         }
-        console.log(event, data);
 
         switch (data.context) {
             case "building_barracks":
@@ -204,7 +198,7 @@ window.onload = () => {
     window.$.Observer(window.GameEvents.town.town_switch).subscribe(window.GDT.getBuilding);
     window.$.Observer(window.GameEvents.unit.order.change).subscribe(window.GDT.getBuilding);
     window.$.Observer(window.GameEvents.window.reload).subscribe(window.GDT.getBuilding);
- 
+
     //Upcomming changes
     // window.GDTMarket = new GDTMarketChecker("https://cdn.grcrt.net/ui/s/alarm.mp3");
     // window.GDTMarket.checkForRessources();
