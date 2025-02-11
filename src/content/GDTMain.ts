@@ -1,8 +1,7 @@
-import type { Collections, UnitOrder } from "./types/Collections";
+import type { Collections, UnitOrder, AllUnitsInterface } from "./types/Collections";
 import type { Models } from "./types/Models";
 import type { UnitsName } from "./types/GameData";
 
-type AllUnitsInterface = Record<UnitsName, number>;
 
 interface BackboneEvent {
     wnd: { getJQElement: Function };
@@ -10,7 +9,6 @@ interface BackboneEvent {
 };
 
 const round = (num: number): number => Math.floor(num);
-
 
 export class GDTFactory {
     UnitStore: { [id: number]: { [K in UnitsName]: number } } = {};
@@ -25,8 +23,7 @@ export class GDTFactory {
         this.allUnitsList = Object.keys(window.GameData.units);
         if (window.MM.status() === undefined) {
             throw new Error("MM is not Initialized");
-        }
-        const { models, collections } = window.MM.status();
+        } const { models, collections } = window.MM.status();
         this.collections = collections;
         this.models = models;
         this.init();
@@ -41,31 +38,34 @@ export class GDTFactory {
             item[iter] = 0;
         }
     }
-
-    getAllUnits() {
-        const allUnits: { [K in UnitsName]: number } = {} as AllUnitsInterface;
-        // die Reset Function setzt alle fehlenden Objekte
-        this.reset(allUnits);
-        for (const orders of this.collections.UnitOrder) {
-            for (const models of orders.models) {
-                if (window.Game.townId === models.attributes.home_town_id) {
-                    for (const units of this.allUnitsList as UnitsName[]) {
-                        allUnits[units] += models.attributes[units];
-                    }
-                }
-            }
-        }
-        return allUnits satisfies { [K in UnitsName]: number };
+    getEmptyUnitObj(): AllUnitsInterface {
+        return { harpy: 0, fury: 0, ladon: 0, rider: 0, satyr: 0, siren: 0, sword: 0, archer: 0, bireme: 0, medusa: 0, zyklop: 0, centaur: 0, chariot: 0, godsent: 0, griffin: 0, hoplite: 0, militia: 0, pegasus: 0, slinger: 0, spartoi: 0, trireme: 0, catapult: 0, cerberus: 0, minotaur: 0, manticore: 0, attack_ship: 0, sea_monster: 0, colonize_ship: 0, big_transporter: 0, calydonian_boar: 0, demolition_ship: 0, small_transporter: 0 };
     }
 
-    getAllOrderedUnits(unitOrders: UnitOrder[]) {
-        const allOrderedUnits = {} as AllUnitsInterface;
-        this.reset(allOrderedUnits);
+    getAllUnits() {
+        // die Reset Function setzt alle fehlenden Objekte auf 0
+        const allUnits = this.getEmptyUnitObj();
+        const AllOrders = this.collections.Units[0].getUnitsInTown();
 
-        for (const order of unitOrders) {
-            const name = order.getUnitId() as UnitsName;
+        for (const unit of this.collections.Units[0].models) {
+            //@ts-ignore
+            console.log(unit.areTownUnits());
+            // const type = order.getType() as UnitsName;
+            // const num = order.getCount();
+            // allUnits[type] = num;
+        }
+
+        return allUnits;
+    }
+
+    getAllOrderedUnits() {
+        // Get Units from current Town
+        const allOrderedUnits = this.getEmptyUnitObj();
+
+        for (const order of this.collections.UnitOrder[0].getAllOrders()) {
+            const type = order.getType() as UnitsName;
             const num = order.getCount();
-            allOrderedUnits[name] += num;
+            allOrderedUnits[type] = num;
         }
 
         return allOrderedUnits;
@@ -83,14 +83,15 @@ export class GDTFactory {
         return needed;
     }
 
-    calcDeff(data = this.collections, townId = window.Game.townId) {
-        //@ts-ignore
-        const { max, blocked } = data.Town[0]._byId[townId].attributes.population;
+    calcDeff(data = this.collections) {
+        const currentTown = data.Town[0].getCurrentTown();
+        const max = currentTown.getMaxPopulation();
+        const blocked = currentTown.getUsedPopulation();
         const free = (max - blocked) * 0.9;
 
         //all available Units and all ordered Units
-        const allUnits: AllUnitsInterface = this.getAllUnits() as AllUnitsInterface;
-        const allOrderedUnits = window.GDT.getAllOrderedUnits(data.UnitOrder[0].getAllOrders()) as AllUnitsInterface;
+        const allUnits = this.getAllUnits();
+        const allOrderedUnits = this.getAllOrderedUnits();
 
         // not really needed but it shows in the log how many troups you are building and how much you have in total.
         Object.keys(allOrderedUnits).forEach(

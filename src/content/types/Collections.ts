@@ -1,3 +1,7 @@
+import { UnitsName } from "./GameData";
+
+export type AllUnitsInterface = Record<UnitsName, number>;
+
 export interface Collections {
     readonly FarmTownPlayerRelation: Array<{ [key: string]: number | null }[]>;
     readonly FarmTown: Array<FarmTown[]>;
@@ -5,7 +9,7 @@ export interface Collections {
     readonly MapFavorites: Array<any[]>;
     readonly TownGroup: Array<TownGroup[]>;
     readonly TownGroupTown: Array<TownGroupTown[]>;
-    readonly Town: Array<Town[]>;
+    readonly Town: Array<Town>;
     readonly BuildingBuildData: Array<BuildingBuildDatum[]>;
     readonly Militia: Array<any[]>;
     readonly IslandQuest: Array<IslandQuest[]>;
@@ -841,6 +845,10 @@ export interface Town {
     readonly wood: number;
     readonly stone: number;
     readonly iron: number;
+
+    getCurrentTown: () => Town;
+    getMaxPopulation: () => number;
+    getUsedPopulation: () => number;
 }
 
 export interface Population {
@@ -870,6 +878,7 @@ export interface Models {
     models: Array<Army>
 
     getAllOrders: () => UnitOrder[];
+    getUnitsInTown: () => Partial<AllUnitsInterface>;
 }
 
 export interface Army {
@@ -944,6 +953,7 @@ export interface UnitOrder {
 
     getCount: () => number;
     getUnitId: () => string;
+    getType: () => string;
 }
 
 export interface RefundForSingleUnit {
