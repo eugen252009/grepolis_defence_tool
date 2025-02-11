@@ -1,163 +1,120 @@
-# ChromeTS Launchpad ![Logo](public/icons/icon48.png)
+# Grepolis Defence Tool
 
-![License](https://img.shields.io/github/license/roshanpshetty/ChromeTS-Launchpad)
+## Überblick
+GDTFactory ist eine TypeScript-Klasse, die zur Verwaltung und Berechnung von Einheiten in einem Strategiespiel dient. Sie bietet Funktionen zum Abrufen, Berechnen und Anzeigen von Truppenständen und deren Unterschiede zwischen vorhandenen und bestellten Einheiten.
 
+## Funktionen
 
-ChromeTS Launchpad is a modern, TypeScript-based boilerplate for creating Chrome Extensions. It provides a solid foundation for building extensions with type safety, modern JavaScript features, and sleek styling using Tailwind CSS.
+### 1. **Konstruktor**
+```typescript
+constructor(debug = false)
+```
+Der Konstruktor initialisiert die Klasse, ruft die Einheitenliste aus `window.GameData.units` ab und stellt sicher, dass `window.MM` initialisiert ist.
 
-## Purpose
+### 2. **`init()`**
+```typescript
+init()
+```
+Wird beim Erstellen des Objekts aufgerufen, um die Einheiten zu initialisieren.
 
-The primary purpose of ChromeTS Launchpad is to streamline the process of developing Chrome extensions using TypeScript. It aims to:
+### 3. **`reset(item: any)`**
+```typescript
+reset(item: any)
+```
+Setzt alle Einheitenwerte in einem Objekt auf `0`.
 
-1. Provide a well-structured starting point for Chrome extension development
-2. Leverage TypeScript for improved code quality and developer experience
-3. Incorporate best practices and modern tooling for extension development
-4. Offer easy and flexible styling with Tailwind CSS
+### 4. **`getEmptyUnitObj()`**
+```typescript
+getEmptyUnitObj(): AllUnitsInterface
+```
+Gibt ein Objekt mit allen Einheiten zurück, die initial auf `0` gesetzt sind.
 
-## What This Extension Does
+### 5. **`getAllUnits()`**
+```typescript
+getAllUnits()
+```
+Ruft alle vorhandenen Einheiten der Stadt ab und setzt fehlende Werte auf `0`.
 
-This boilerplate extension includes basic functionality to demonstrate core Chrome extension features:
+### 6. **`getAllOrderedUnits()`**
+```typescript
+getAllOrderedUnits()
+```
+Liest alle derzeit bestellten Einheiten aus der `UnitOrder`-Sammlung und gibt sie zurück.
 
-1. A background script that logs when the extension is installed
-2. A content script that can interact with web pages
-3. A popup with a simple button interaction
-4. An options page for extension configuration
-5. Integration with Chrome's Storage API for saving settings
-6. Tailwind CSS for quick and responsive styling
+### 7. **`getDifference()`**
+```typescript
+getDifference({ sword = 0, archer = 0, hoplite = 0 }, offset = 0)
+```
+Berechnet den Unterschied zwischen vorhandenen und benötigten Einheiten basierend auf festgelegten Prozentsätzen.
 
-![Screeshot](public/demo.png)
+### 8. **`calcDeff()`**
+```typescript
+calcDeff(data = this.collections)
+```
+Berechnet die Verteidigungskapazität basierend auf freien Bevölkerungspunkten, vorhandenen und bestellten Einheiten.
 
-*Developers can easily build upon this foundation to create more complex and feature-rich extensions.*
+### 9. **`buildImg()`**
+```typescript
+buildImg(type: UnitsName, diff: number)
+```
+Erstellt ein HTML-Element zur Anzeige der Differenz von Einheiten.
 
-## Why TypeScript
+### 10. **`showTroups()`**
+```typescript
+showTroups(data: BackboneEvent)
+```
+Erstellt eine HTML-Anzeige für die aktuellen Truppen und fügt sie dem Barracken-Fenster hinzu.
 
-TypeScript is a modern, statically typed programming language that provides type safety and improved developer experience. It is used in this boilerplate extension to enhance code quality and maintainability.
+### 11. **`redraw()`**
+```typescript
+redraw()
+```
+Aktualisiert die Truppenanzeige basierend auf den aktuellen Berechnungen.
 
-## Why Manifest V3
+### 12. **`attackCityList()`**
+```typescript
+attackCityList(data: any)
+```
+Fügt ein visuelles Element zur Angriffs-Städteliste hinzu.
 
-ChromeTS Launchpad uses Manifest V3, the latest version of Chrome's extension platform. Here's why:
+### 13. **`getBuilding()`**
+```typescript
+getBuilding(event: { type: string }, data: BackboneEvent)
+```
+Bestimmt, welche Anzeige basierend auf dem Gebäudetyp aktualisiert wird (z.B. Kaserne, Hafen, Spielerprofil).
 
-1. **Enhanced Security**: Manifest V3 improves extension security through more granular permissions and limited access to powerful APIs.
-2. **Better Performance**: It promotes the use of service workers for background processes, leading to reduced memory usage and improved overall browser performance.
-3. **Future-Proofing**: As the new standard for Chrome extensions, Manifest V3 ensures long-term compatibility and support.
-4. **Improved User Privacy**: It provides users with more control over when and how extensions can access site data.
-5. **Modern Web Technologies**: Manifest V3 aligns more closely with current web development practices and standards.
+### 14. **`getVersion()`**
+```typescript
+getVersion()
+```
+Gibt die aktuelle Version des Skripts zurück.
 
-By using Manifest V3, ChromeTS Launchpad ensures that extensions built with it are up-to-date, secure, and performant.
-
-## Features
-
-- TypeScript support
-- Webpack for bundling
-- Tailwind CSS for styling
-- Background script
-- Content script
-- Popup page
-- Options page
-- Chrome Storage API integration
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js (v14 or later)
-- npm (v6 or later)
-
-### Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/RoshanPShetty/ChromeTS-Launchpad.git
+## Installation
+1. Stelle sicher, dass dein Projekt TypeScript verwendet.
+2. Füge die Datei `GDTFactory.ts` in dein Projekt ein.
+3. Importiere die Klasse in dein Skript:
+   ```typescript
+   import { GDTFactory } from "./GDTFactory";
+   ```
+4. Erstelle eine neue Instanz:
+   ```typescript
+   const gdt = new GDTFactory(true);
    ```
 
-2. Navigate to the project directory:
-   ```bash
-   cd chromets-launchpad
-   ```
+## Nutzung
+- **Einheiten abrufen:**
+  ```typescript
+  console.log(gdt.getAllUnits());
+  ```
+- **Einheiten-Differenz berechnen:**
+  ```typescript
+  console.log(gdt.getDifference({ sword: 10, archer: 5, hoplite: 8 }, 2));
+  ```
+- **Truppenanzeige aktualisieren:**
+  ```typescript
+  gdt.redraw();
+  ```
 
-3. Install dependencies:
-   ```bash
-   npm install
-   ```
+## Lizenz
+Dieses Projekt steht unter der MIT-Lizenz.
 
-### Development
-
-Run the development build with hot reloading:
-```bash
-npm run watch
-```
-
-### Production Build
-
-To create a production build:
-```bash
-npm run build
-```
-
-This will generate optimized files in the `dist` folder.
-
-### ESLint Configuration
-
-The project is configured with ESLint to enforce consistent code quality and catch potential errors early. The following key linting rules are in place:
-
-- **Enforce strict equality** (`eqeqeq`): Requires the use of `===` and `!==` instead of `==` and `!=` to avoid type coercion issues.
-- **Use semicolons** (`semi`): Enforces the use of semicolons at the end of statements.
-- **Warn on unused variables** (`@typescript-eslint/no-unused-vars`): Flags variables that are declared but not used anywhere in the code.
-- **Prefer `const`** (`prefer-const`): Suggests using `const` for variables that are never reassigned after being initialized.
-
-To lint your code, run:
-
-```bash
-npm run lint
-```
-
-To automatically fix certain linting issues, run:
-
-```bash
-npm run lint:fix
-```
-
-Ensure that your code passes the linting checks before committing to maintain code consistency and quality across the project.
-
-
-### Loading the Extension in Chrome
-
-1. Open Chrome and navigate to `chrome://extensions`
-2. Enable "Developer mode"
-3. Click "Load unpacked" and select the `dist` folder in your project directory
-
-## Customization
-
-- Modify the TypeScript files in the `src` folder to add your extension's functionality
-- Update the HTML files in the `popup` and `options` folders
-- Utilize Tailwind CSS classes to style your HTML elements
-- Adjust the `tailwind.config.js` file to customize your Tailwind setup
-- Modify the `manifest.json` file to change extension metadata, permissions, and other settings
-
-## Future Implementations
-
-- MV3 Boilerplate w/ React/Vue/Solid/Svelte/Preact Templates
-
-## Contributing
-
-Contributions are welcome and greatly appreciated! If you're looking to contribute, here are some good first issues to get you started:
-
-### Good First Issues
-
-1. **Add Jest for unit testing TypeScript code**
-   - Set up Jest testing framework to enable unit testing for TypeScript code in the project.
-   - [View Issue](https://github.com/RoshanPShetty/ChromeTS-Launchpad/issues/[ISSUE_NUMBER])
-
-To contribute:
-
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-For more detailed information on contributing, please see our [CONTRIBUTING.md](CONTRIBUTING.md) file.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

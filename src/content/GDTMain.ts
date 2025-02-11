@@ -13,14 +13,14 @@ const round = (num: number): number => Math.floor(num);
 export class GDTFactory {
     UnitStore: { [id: number]: { [K in UnitsName]: number } } = {};
     debug: boolean = false;
-    allUnitsList: Array<any> = [];
+    allUnitsList: Array<UnitsName> = [];
     collections: Collections = undefined!;
     models: Models = undefined!;
     version = "0.0.4";
 
     constructor(debug = false) {
         this.debug = debug;
-        this.allUnitsList = Object.keys(window.GameData.units);
+        this.allUnitsList = Object.keys(window.GameData.units) as Array<UnitsName>;
         if (window.MM.status() === undefined) {
             throw new Error("MM is not Initialized");
         } const { models, collections } = window.MM.status();
