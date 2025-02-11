@@ -18,6 +18,10 @@ export class GDTFactory {
     models: Models = undefined!;
     version = "0.0.4";
 
+    /*
+     * Erstelle das Objekt
+     * @param {boolean} [debug=true] Aktiviert den Debug Modus
+    */
     constructor(debug = false) {
         this.debug = debug;
         this.allUnitsList = Object.keys(window.GameData.units) as Array<UnitsName>;
@@ -26,24 +30,33 @@ export class GDTFactory {
         } const { models, collections } = window.MM.status();
         this.collections = collections;
         this.models = models;
-        this.init();
-    }
-
-    init() {
         this.getAllUnits();
     }
+
+    /*
+     * Setzt die Einheiten vom übergebebenen Objekt auf 0 
+     * @param {any} item
+    */
 
     reset(item: any) {
         for (const iter of this.allUnitsList) {
             item[iter] = 0;
         }
     }
+
+    /*
+     * Gibt einem ein Objekt zurück, welches dem UnitInterface entspricht. Dieses kann in einigen Funktionen verwendet werden, um entweder die Truppen abzuspeichern, oder welche zu setzen.
+     * @return {AllUnitsInterface} Gibt ein ein neues Objekt, welches dem UnitInterface entspricht zurück.
+    */
     getEmptyUnitObj(): AllUnitsInterface {
         return { harpy: 0, fury: 0, ladon: 0, rider: 0, satyr: 0, siren: 0, sword: 0, archer: 0, bireme: 0, medusa: 0, zyklop: 0, centaur: 0, chariot: 0, godsent: 0, griffin: 0, hoplite: 0, militia: 0, pegasus: 0, slinger: 0, spartoi: 0, trireme: 0, catapult: 0, cerberus: 0, minotaur: 0, manticore: 0, attack_ship: 0, sea_monster: 0, colonize_ship: 0, big_transporter: 0, calydonian_boar: 0, demolition_ship: 0, small_transporter: 0 };
     }
 
+    /*
+     * Gibt ein Objekt zurück, welches alle Truppen einer Stadt summiert.
+     * @return {AllUnitsInterface} Gibt ein Objekt zurück, welches alle Truppen einer Stadt summiert.
+    */
     getAllUnits() {
-        // die Reset Function setzt alle fehlenden Objekte auf 0
         const allUnits = this.getEmptyUnitObj();
         const AllOrders = this.collections.Units[0].getUnitsInTown();
 
@@ -58,8 +71,11 @@ export class GDTFactory {
         return allUnits;
     }
 
+    /*
+     * Gibt ein Objekt von allen Truppen rekrutierungen zurück.
+     * @return {AllOrderedUnits} Gibt ein Objekt von allen Truppen rekrutierungen zurück.
+    */
     getAllOrderedUnits() {
-        // Get Units from current Town
         const allOrderedUnits = this.getEmptyUnitObj();
 
         for (const order of this.collections.UnitOrder[0].getAllOrders()) {
@@ -71,6 +87,18 @@ export class GDTFactory {
         return allOrderedUnits;
     }
 
+    /* 
+     * Gibt ein Objekt zurück, welches die differenz zwischen aktuellen Truppen und den benötigten Truppen darstellt.
+     * @typedef UnitDiff
+     * @return {object}
+     * @property {number} sword
+     * @property {number} archer
+     * @property {number} hoplite
+     *
+     *
+     *
+     *  @return{UnitDiff} Gibt ein Objekt zurück, welches die differenz zwischen aktuellen Truppen und den benötigten Truppen darstellt.
+    */
     getDifference({ sword = 0, archer = 0, hoplite = 0 }, offset = 0) {
         const calc = (amnt: number, percent: number) => round(amnt * percent);
         const count = sword + archer + hoplite + offset;
@@ -83,6 +111,10 @@ export class GDTFactory {
         return needed;
     }
 
+    /*
+     * Berechnet die Differenz zwischen 2 Truppen Objekten
+     *
+    */
     calcDeff(data = this.collections) {
         const currentTown = data.Town[0].getCurrentTown();
         const max = currentTown.getMaxPopulation();
@@ -93,7 +125,11 @@ export class GDTFactory {
         const allUnits = this.getAllUnits();
         const allOrderedUnits = this.getAllOrderedUnits();
 
-        // not really needed but it shows in the log how many troups you are building and how much you have in total.
+        /*
+         * Gibt in der Konsole die Truppen rekrutierungen und die Summe mit den aktuell in der Stadt stehenden Truppen aus.
+         * ist vorwiegend nur fürs Debugging und so nicht notwendig
+        */
+
         Object.keys(allOrderedUnits).forEach(
             unit => {
                 //@ts-ignore
@@ -113,12 +149,16 @@ export class GDTFactory {
         return [this.getDifference(allUnits, free), allUnits, allOrderedUnits];
     }
 
-    buildImg(type: UnitsName, diff: number) {
+    /*
+     * Zeichnet die Bilder für den Passenden Truppentypen.
+     * @return {HTMLElement} das Bild mit der Passenden Nummer als HTML Element zum Implementieren aus.
+    */
+    buildImg(type: UnitsName, unitNumber: number) {
         const p = document.createElement("p");
         const inner = document.createElement("p");
 
         inner.classList.add(type);
-        inner.textContent = diff.toString();
+        inner.textContent = unitNumber.toString();
 
         inner.style.position = "absolute";
         inner.style.margin = "0";
@@ -135,6 +175,10 @@ export class GDTFactory {
         return p;
     }
 
+    /*
+     * Fügt die Truppen dem DOM hinzu.
+     * @param {object} das Backbone Event.
+    */
     showTroups(data: BackboneEvent) {
         //create The HTML
         const div = document.createElement("div");
@@ -150,6 +194,11 @@ export class GDTFactory {
         //Append The HTML to the Barrack Window for later reference
         data.wnd.getJQElement()[0].appendChild(div);
     }
+
+
+    /*
+     * Aktualisiert die Truppen vom DOM.
+    */
     redraw() {
         function click(type: UnitsName, num: number) {
             const unit = document.querySelector(`#unit_order_tab_${type}`) as HTMLElement;
@@ -181,6 +230,9 @@ export class GDTFactory {
         if (diff[0].hoplite > 0 || window.GDT.debug) container.appendChild(hoplite);
     }
 
+    /*
+     * Diese Funktion soll später mal die Implementation von einer Städteliste darstellen, bzw. eher den Button dafür.
+    */
     attackCityList(data: any) {
         const div = document.createElement("div");
         div.id = "staeteliste";
@@ -192,6 +244,11 @@ export class GDTFactory {
         data.wnd.getJQElement()[0].appendChild(div);
     }
 
+    /* 
+     * Finde heraus welches Gebäude geöffnet wurde, um die passenden Funktionen nur dann auszuführen, wenn das richtige Fenster geöffnet wurde.
+     * @param {event} Dieses Element gibt den Context des Gebäudes aus.
+     * @param {object} Das ist das Backbone Event.
+    */
     getBuilding(event: { type: string }, data: BackboneEvent) {
         if (event.type === "window:reload") {
             window.GDT.redraw();
@@ -213,7 +270,10 @@ export class GDTFactory {
                 return;
         }
     }
-
+    /* 
+     * Gibt die Version des Scriptes wieder
+     * @return {string} die Version des Scripts.
+     */
     getVersion() {
         return this.version;
     }
