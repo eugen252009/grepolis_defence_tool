@@ -37,7 +37,6 @@ export class GDTFactory {
      * Setzt die Einheiten vom übergebebenen Objekt auf 0 
      * @param {any} item
     */
-
     reset(item: any) {
         for (const iter of this.allUnitsList) {
             item[iter] = 0;
@@ -94,8 +93,6 @@ export class GDTFactory {
      * @property {number} sword
      * @property {number} archer
      * @property {number} hoplite
-     *
-     *
      *
      *  @return{UnitDiff} Gibt ein Objekt zurück, welches die differenz zwischen aktuellen Truppen und den benötigten Truppen darstellt.
     */
