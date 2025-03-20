@@ -1,7 +1,110 @@
-# Grepolis Defence Tool
+# GDTFactory Chrome Extension
+
+## Einleitung
+GDTFactory ist eine Chrome-Erweiterung, die das Management und die Berechnung von Einheiten in einem Strategiespiel automatisiert. Diese Erweiterung bietet Funktionen zur Erfassung, Analyse und Visualisierung von Truppenbewegungen, um eine effizientere Strategieplanung zu ermöglichen. 
+
+Mit der GDTFactory-Erweiterung kannst du:
+- Alle Einheiten in deiner Stadt erfassen
+- Bestellte Einheiten mit vorhandenen vergleichen
+- Optimale Truppenverteilung berechnen
+- Eine visuelle Darstellung deiner Einheiten in der Spieloberfläche erhalten
 
 ## Überblick
 GDTFactory ist eine TypeScript-Klasse, die zur Verwaltung und Berechnung von Einheiten in einem Strategiespiel dient. Sie bietet Funktionen zum Abrufen, Berechnen und Anzeigen von Truppenständen und deren Unterschiede zwischen vorhandenen und bestellten Einheiten.
+
+## Projektstruktur
+```
+/public
+  ├── demo.png
+  ├── icons/
+  │   ├── icon128.png
+  │   ├── icon16.png
+  │   ├── icon48.png
+  ├── manifest.json
+/src
+  ├── background/
+  │   ├── background.ts
+  ├── content/
+  │   ├── types/
+  │   │   ├── GameData.ts
+  │   │   ├── EventData.ts
+  │   │   ├── Models.ts
+  │   │   ├── Collections.ts
+  │   ├── inject.js
+  │   ├── content.ts
+  │   ├── GDTMain.ts
+  │   ├── GDTLogger.ts
+  ├── options/
+  │   ├── options.html
+  │   ├── options.ts
+  ├── popup/
+  │   ├── popup.html
+  │   ├── popup.ts
+  ├── styles/
+  │   ├── tailwind.css
+  ├── tailwind.config.js
+  ├── tsconfig.json
+  ├── webpack.config.cjs
+  ├── pnpm-lock.yaml
+/dist
+  ├── icons/
+  │   ├── icon128.png
+  │   ├── icon16.png
+  │   ├── icon48.png
+  ├── background.js
+  ├── content.js
+  ├── popup.js
+  ├── options.js
+  ├── styles.css
+  ├── styles.js
+  ├── popup.html
+  ├── options.html
+  ├── demo.png
+  ├── manifest.json
+/documentation
+  ├── Quellen.txt
+  ├── HowTo.pdf
+/README.md
+```
+
+## Build-Prozess
+GDTFactory nutzt **Webpack** zur Bündelung und Optimierung des Codes. Die wichtigsten Build-Skripte befinden sich in der `package.json`:
+
+### Build-Skripte:
+```json
+"scripts": {
+  "build": "npm run lint && webpack --config webpack.config.cjs --mode=production",
+  "build:dev": "npm run lint && webpack --config webpack.config.cjs --mode=development",
+  "watch": "webpack --config webpack.config.cjs --mode=development --watch",
+  "lint": "eslint .",
+  "lint:fix": "eslint . --fix"
+}
+```
+
+### Erklärungen:
+- **`build`**: Führt den Linter aus und erstellt die optimierte Produktionsversion.
+- **`build:dev`**: Erstellt eine Entwicklungsvariante mit Debugging-Informationen.
+- **`watch`**: Startet Webpack im Watch-Modus für automatische Updates während der Entwicklung.
+- **`lint`**: Prüft den Code auf Fehler und Formatierungsprobleme.
+- **`lint:fix`**: Korrigiert automatisch erkannte Probleme.
+
+### Build-Anleitung:
+1. Installiere die Abhängigkeiten:
+   ```sh
+   npm install
+   ```
+2. Erstelle den Build für die Produktion:
+   ```sh
+   npm run build
+   ```
+3. Für die Entwicklung verwende:
+   ```sh
+   npm run build:dev
+   ```
+4. Beobachte Änderungen und baue automatisch neu:
+   ```sh
+   npm run watch
+   ```
 
 ## Funktionen
 
@@ -9,7 +112,7 @@ GDTFactory ist eine TypeScript-Klasse, die zur Verwaltung und Berechnung von Ein
 ```typescript
 constructor(debug = false)
 ```
-Der Konstruktor initialisiert die Klasse, ruft die Einheitenliste aus `window.GameData.units` ab und stellt sicher, dass `window.MM` initialisiert ist.
+Der Konstruktor initialisiert die Klasse, ruft die Einheitenliste aus `window.GameData.units` ab und stellt sicher, dass `window.MM` initialisiert ist. 
 
 ### 2. **`init()`**
 ```typescript
@@ -100,20 +203,6 @@ Gibt die aktuelle Version des Skripts zurück.
    ```typescript
    const gdt = new GDTFactory(true);
    ```
-
-## Nutzung
-- **Einheiten abrufen:**
-  ```typescript
-  console.log(gdt.getAllUnits());
-  ```
-- **Einheiten-Differenz berechnen:**
-  ```typescript
-  console.log(gdt.getDifference({ sword: 10, archer: 5, hoplite: 8 }, 2));
-  ```
-- **Truppenanzeige aktualisieren:**
-  ```typescript
-  gdt.redraw();
-  ```
 
 ## Lizenz
 Dieses Projekt steht unter der MIT-Lizenz.
