@@ -1,16 +1,21 @@
 {
-  "compilerOptions": {
-"module": "commonjs",
+	"compilerOptions": {
+		"module": "commonjs",
 		"strict": true,
 		"esModuleInterop": true,
-    // "declaration": true,
-    "target": "es6",              // Modernes JavaScript für die meisten Browser
-    // "module": "ES6",             // Kein Modulsystem, da Content Scripts global sind
-    // "moduleResolution": "bundler",
-    "outDir": "./dist",           // Ausgabeort für kompilierte Dateien
-   // "types": ["chrome"],
-    // "strict": true               // Strikte Typprüfung
-  },
-  "include":["./src/**/*"],
-  "exclude": ["**/node_modules","./dist","./src/types/*.ts"]      // Keine Abhängigkeiten kompilieren
+		// "declaration": true,
+		"target": "es6", // Modernes JavaScript für die meisten Browser
+		// "module": "ES6",             // Kein Modulsystem, da Content Scripts global sind
+		// "moduleResolution": "bundler",
+		"outDir": "./dist" // Ausgabeort für kompilierte Dateien
+		// "types": ["chrome"],
+	},
+	"include": [
+		"./src/**/*"
+	],
+	"exclude": [
+		"**/node_modules",
+		"./dist",
+		"./src/types/*.ts"
+	] // Keine Abhängigkeiten kompilieren
 }

@@ -38,7 +38,7 @@ export type CollectionType = {
     readonly PlayerTask: Array<any[]>;
     readonly WorldBoost: Array<any[]>;
     readonly Trade: Array<any[]>;
-    readonly UnitOrder: Array<any[]>;
+    readonly UnitOrder: Array<UnitOrder[]>;
     readonly CastedPowers: Array<any[]>;
     readonly Units: Array<Unit[]>;
     readonly BuildingOrder: Array<BuildingOrder[]>;
@@ -776,4 +776,31 @@ export type Unit = {
     readonly current_town_link: string;
     readonly current_player_link: string;
     readonly number_on_island?: number;
+}
+
+
+export type UnitOrder = {
+    readonly parts_done:             number;
+    readonly id:                     number;
+    readonly town_id:                number;
+    readonly unit_type:              string;
+    readonly kind:                   string;
+    readonly count:                  number;
+    readonly units_left:             number;
+    readonly to_be_completed_at:     number;
+    readonly created_at:             number;
+    readonly wood:                   number;
+    readonly stone:                  number;
+    readonly iron:                   number;
+    readonly favor:                  number;
+    readonly refund_for_single_unit: RefundForSingleUnit;
+    readonly player_id:              number;
+}
+
+export type RefundForSingleUnit = {
+    readonly wood:  number;
+    readonly stone: number;
+    readonly iron:  number;
+    readonly favor: number;
+    readonly pop:   number;
 }
