@@ -40,7 +40,7 @@ export type CollectionType = {
     readonly Trade: Array<any[]>;
     readonly UnitOrder: Array<UnitOrder[]>;
     readonly CastedPowers: Array<any[]>;
-    readonly Units: Array<Unit[]>;
+    readonly Units: Array<UnitType[]>;
     readonly BuildingOrder: Array<BuildingOrder[]>;
     readonly ResearchOrder: Array<any[]>;
     readonly Buildings: Array<any[]>;
@@ -728,7 +728,7 @@ export type TownGroupTown = {
     readonly id: number;
 }
 
-export type Unit = {
+export type UnitType = {
     readonly id: number;
     readonly home_town_id: number;
     readonly current_town_id: number;
@@ -780,27 +780,27 @@ export type Unit = {
 
 
 export type UnitOrder = {
-    readonly parts_done:             number;
-    readonly id:                     number;
-    readonly town_id:                number;
-    readonly unit_type:              string;
-    readonly kind:                   string;
-    readonly count:                  number;
-    readonly units_left:             number;
-    readonly to_be_completed_at:     number;
-    readonly created_at:             number;
-    readonly wood:                   number;
-    readonly stone:                  number;
-    readonly iron:                   number;
-    readonly favor:                  number;
+    readonly parts_done: number;
+    readonly id: number;
+    readonly town_id: number;
+    readonly unit_type: string;
+    readonly kind: string;
+    readonly count: number;
+    readonly units_left: number;
+    readonly to_be_completed_at: number;
+    readonly created_at: number;
+    readonly wood: number;
+    readonly stone: number;
+    readonly iron: number;
+    readonly favor: number;
     readonly refund_for_single_unit: RefundForSingleUnit;
-    readonly player_id:              number;
+    readonly player_id: number;
 }
 
 export type RefundForSingleUnit = {
-    readonly wood:  number;
+    readonly wood: number;
     readonly stone: number;
-    readonly iron:  number;
+    readonly iron: number;
     readonly favor: number;
-    readonly pop:   number;
+    readonly pop: number;
 }
